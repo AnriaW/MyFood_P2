@@ -440,4 +440,21 @@ public class Gerenciamento {
 
         throw new UnregisteredException("Produto nao encontrado");
     }
+
+    //User Story 5
+
+    //TODO: Voltar aqui para fazer o que for necessário.
+
+    //User Story 6
+
+    //TODO: Voltar aqui para fazer o que for necessário.
+
+    // User Story 7
+
+    //TODO: Voltar aqui para fazer o que for necessário.
+
+    // User Story 8
+
+    //TODO: Voltar aqui para fazer o que for necessário.
+
 }
