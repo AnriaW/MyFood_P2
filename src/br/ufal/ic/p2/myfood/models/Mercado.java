@@ -24,6 +24,21 @@ public class Mercado extends Empresa {
         this.tipoMercado = tipoMercado;
     }
 
+    public String getAbre(){
+        return abre;
+    }
+
+    public void setAbre(String abre){
+        this.abre = abre;
+    }
+
+    public String getFecha(){
+        return abre;
+    }
+
+    public void setFecha(String fecha){
+        this.fecha = fecha;
+    }
 
     public String getTipoMercado() {
         return tipoMercado;

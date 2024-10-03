@@ -138,7 +138,7 @@ public class Gerenciamento {
         throw new InvalidCredentialsException();
     }
 
-
+    // TODO: Modificar o criar empresa para que tenhamos Farmácia e Mercado
     public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String tipoCozinha) throws CompanyCreationException, WrongTypeUserException{
 
         if (nome == null || nome.isEmpty()) {
@@ -444,6 +444,9 @@ public class Gerenciamento {
     //User Story 5
 
     //TODO: Voltar aqui para fazer o que for necessário.
+    //alterarFuncionamento(int mercado, String: abre, String fecha)
+    // descrição: Altera o horario de funcionamento do Mercado.
+    // retorno: Sem retorno
 
     //User Story 6
 
