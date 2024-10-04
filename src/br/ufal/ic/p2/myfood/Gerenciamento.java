@@ -172,6 +172,72 @@ public class Gerenciamento {
         return -1;
     }
 
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado) throws CompanyCreationException, WrongTypeUserException{
+
+        if (nome == null || nome.isEmpty()) {
+            throw new CompanyCreationException("Nome invalido");
+        }
+        if (endereco == null || endereco.isEmpty()) {
+            throw new CompanyCreationException("Endereco invalido");
+        }
+
+        for (Empresa empresa : persistenciaEmpresa.listar()) {
+            if (empresa.getNome().equals(nome) && empresa.getDono().getId() != dono) {
+                throw new CompanyCreationException("Empresa com esse nome ja existe");
+            }
+            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                throw new CompanyCreationException("Proibido cadastrar duas empresas com o mesmo nome e local");
+            }
+        }
+
+        if (!(persistenciaUsuario.buscar(dono).getClass().getSimpleName().equals("Dono"))) {
+            throw new WrongTypeUserException();
+        }
+
+        if (tipoEmpresa.equals("mercado")) {
+            Dono tempDono = (Dono) persistenciaUsuario.buscar(dono);
+            Mercado mercado = new Mercado(nome, endereco, tempDono, abre, fecha, tipoMercado);
+            persistenciaEmpresa.salvar(mercado);
+            tempDono.addComp_list(mercado);
+            return mercado.getId();
+        }
+
+        return -1;
+    }
+
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas) throws CompanyCreationException, WrongTypeUserException{
+
+        if (nome == null || nome.isEmpty()) {
+            throw new CompanyCreationException("Nome invalido");
+        }
+        if (endereco == null || endereco.isEmpty()) {
+            throw new CompanyCreationException("Endereco invalido");
+        }
+
+        for (Empresa empresa : persistenciaEmpresa.listar()) {
+            if (empresa.getNome().equals(nome) && empresa.getDono().getId() != dono) {
+                throw new CompanyCreationException("Empresa com esse nome ja existe");
+            }
+            if (empresa.getNome().equals(nome) && empresa.getEndereco().equals(endereco)) {
+                throw new CompanyCreationException("Proibido cadastrar duas empresas com o mesmo nome e local");
+            }
+        }
+
+        if (!(persistenciaUsuario.buscar(dono).getClass().getSimpleName().equals("Dono"))) {
+            throw new WrongTypeUserException();
+        }
+
+        if (tipoEmpresa.equals("farmacia")) {
+            Dono tempDono = (Dono) persistenciaUsuario.buscar(dono);
+            Farmacia farmacia = new Farmacia(nome, endereco, tempDono, aberto24Horas);
+            persistenciaEmpresa.salvar(farmacia);
+            tempDono.addComp_list(farmacia);
+            return farmacia.getId();
+        }
+
+        return -1;
+    }
+
 
     public String getEmpresasDoUsuario(int idDono) throws WrongTypeUserException {
         if (!(persistenciaUsuario.buscar(idDono).getClass().getSimpleName().equals("Dono"))) {

@@ -93,4 +93,17 @@ public class Facade {
         gerenciamento.removerProduto(pedido, produto);
     }
 
+    // User Story 5
+
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado) throws CompanyCreationException, WrongTypeUserException {
+        return gerenciamento.criarEmpresa(tipoEmpresa, dono, nome, endereco, abre, fecha, tipoMercado);
+    }
+
+    // User Story 6
+
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas) throws CompanyCreationException, WrongTypeUserException {
+        return gerenciamento.criarEmpresa(tipoEmpresa, dono, nome, endereco, aberto24Horas);
+    }
+    
+
 }
