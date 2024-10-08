@@ -6,7 +6,7 @@ public class Usuario implements Serializable {
     private static int contador = 1; 
     private int id;
     private String nome;
-    private String email;
+    String email;
     private String senha;
     private String endereco;
 
@@ -40,7 +40,6 @@ public class Usuario implements Serializable {
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }

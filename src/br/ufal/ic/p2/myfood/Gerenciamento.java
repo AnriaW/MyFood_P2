@@ -8,6 +8,7 @@ import br.ufal.ic.p2.myfood.persistence.*;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Gerenciamento {
 
@@ -24,22 +25,22 @@ public class Gerenciamento {
 
         for (Usuario usuario : persistenciaUsuario.listar()) {
             if (usuario instanceof Dono dono) {
-                List<Empresa> companiesOfUser = persistenciaEmpresa.listar()
+                List<Empresa> empresasDoUsuario = persistenciaEmpresa.listar()
                         .stream()
                         .filter(company -> company.getDono().getId() == dono.getId())
                         .toList();
 
-                dono.setComp_list(companiesOfUser);
+                dono.setComp_list(empresasDoUsuario);
             }
         }
 
-        for (Empresa comp : persistenciaEmpresa.listar()) {
-            List<Produto> productsOfComp = persistenciaProduto.listar()
+        for (Empresa empresa : persistenciaEmpresa.listar()) {
+            List<Produto> produtosEmpresa = persistenciaProduto.listar()
                     .stream()
-                    .filter(produto -> produto.getId_dono() == comp.getId())
+                    .filter(produto -> produto.getId_dono() == empresa.getId())
                     .toList();
 
-            comp.setProd_list(productsOfComp);
+            empresa.setProd_list(produtosEmpresa);
         }
     }
 
@@ -118,6 +119,28 @@ public class Gerenciamento {
         persistenciaUsuario.salvar(dono);
     }
 
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws UserCreationException {
+
+        testUserInvalid(nome, email, senha, endereco);
+
+        if (veiculo == null || veiculo.isEmpty()) {
+            throw new UserCreationException("Veiculo invalido");
+        }
+
+        if (placa == null || placa.isEmpty()) {
+            throw new UserCreationException("Placa invalido");
+        }
+
+        for (Usuario user : persistenciaUsuario.listar()) {
+            if (user.getEmail().equals(email)) {
+                throw new UserCreationException("Conta com ese email ja existe");
+            }
+        }
+
+        Entregador entregador = new Entregador(nome, email, senha, endereco, veiculo, placa);
+        persistenciaUsuario.salvar(entregador);
+    }
+
 
     public String getAtributoUsuario(int id, String atributo) throws UnregisteredException {
         Usuario usuario = persistenciaUsuario.buscar(id);
@@ -178,7 +201,41 @@ public class Gerenciamento {
             throw new CompanyCreationException("Nome invalido");
         }
         if (endereco == null || endereco.isEmpty()) {
-            throw new CompanyCreationException("Endereco invalido");
+            throw new CompanyCreationException("Endereco da empresa invalido");
+        }
+        if (tipoEmpresa == null || tipoEmpresa.isEmpty()){
+            throw new CompanyCreationException("Tipo de empresa invalido");
+        }
+        if (abre == null){
+            throw new CompanyCreationException("Horario invalido");
+        }
+        if (fecha == null){
+            throw new CompanyCreationException("Horario invalido");
+        }
+
+        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")){
+            throw new CompanyCreationException("Formato de hora invalido");
+        }
+
+        if(tipoMercado == null || tipoMercado.isEmpty()){
+            throw new CompanyCreationException("Tipo de mercado invalido");
+        }
+
+        String[] abreParts = abre.split(":");
+        String[] fechaParts = fecha.split(":");
+
+        int abreHora = Integer.parseInt(abreParts[0]);
+        int abreMinuto = Integer.parseInt(abreParts[1]);
+
+        int fechaHora = Integer.parseInt(fechaParts[0]);
+        int fechaMinuto = Integer.parseInt(fechaParts[1]);
+
+        if (abreHora > 23 || fechaHora > 23 || abreMinuto > 59 || fechaMinuto > 59) {
+            throw new CompanyCreationException("Horarios invalidos");
+        }
+
+        if (fechaHora < abreHora || (fechaHora == abreHora && fechaMinuto < abreMinuto)) {
+            throw new CompanyCreationException("Horarios invalidos");
         }
 
         for (Empresa empresa : persistenciaEmpresa.listar()) {
@@ -205,14 +262,18 @@ public class Gerenciamento {
         return -1;
     }
 
-    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas) throws CompanyCreationException, WrongTypeUserException{
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios) throws CompanyCreationException, WrongTypeUserException{
 
         if (nome == null || nome.isEmpty()) {
             throw new CompanyCreationException("Nome invalido");
         }
         if (endereco == null || endereco.isEmpty()) {
-            throw new CompanyCreationException("Endereco invalido");
+            throw new CompanyCreationException("Endereco da empresa invalido");
         }
+        if (tipoEmpresa == null || tipoEmpresa.isEmpty()){
+            throw new CompanyCreationException("Tipo de empresa invalido");
+        }
+
 
         for (Empresa empresa : persistenciaEmpresa.listar()) {
             if (empresa.getNome().equals(nome) && empresa.getDono().getId() != dono) {
@@ -229,7 +290,7 @@ public class Gerenciamento {
 
         if (tipoEmpresa.equals("farmacia")) {
             Dono tempDono = (Dono) persistenciaUsuario.buscar(dono);
-            Farmacia farmacia = new Farmacia(nome, endereco, tempDono, aberto24Horas);
+            Farmacia farmacia = new Farmacia(nome, endereco, tempDono, aberto24Horas, numeroFuncionarios);
             persistenciaEmpresa.salvar(farmacia);
             tempDono.addComp_list(farmacia);
             return farmacia.getId();
@@ -273,37 +334,41 @@ public class Gerenciamento {
     }
 
     public int getIdEmpresa(int idDono, String nome, int indice) throws OutofBoundsException, WrongTypeUserException, UnregisteredException, CompanyCreationException {
+        // Verificar se o nome é inválido
         if (nome == null || nome.isEmpty()) {
             throw new CompanyCreationException("Nome invalido");
         }
 
+        // Verificar se o usuario é do tipo Dono
         if (!(persistenciaUsuario.buscar(idDono).getClass().getSimpleName().equals("Dono"))) {
             throw new WrongTypeUserException();
         }
 
-        List<Empresa> companiesOfUser = persistenciaEmpresa.listar()
+        // Buscar todas as empresas do dono com o nome fornecido
+        List<Empresa> empresasDoUsuario = persistenciaEmpresa.listar()
                 .stream()
                 .filter(company -> company.getDono().getId() == idDono && company.getNome().equals(nome))
                 .toList();
 
-        for (Empresa empresa : companiesOfUser) {
-            if (!empresa.getNome().equals(nome)) {
-                throw new UnregisteredException("Nao existe empresa com esse nome");
-            }
-        }
-
-        if(getIndexByNome(companiesOfUser, nome) == -1) {
-            throw new UnregisteredException("Nao existe empresa com esse nome");
-        }
-
-        if (indice >= companiesOfUser.size()) {
-            throw new OutofBoundsException();
-        } else if (indice < 0) {
+        // Verificar se o índice é negativo antes de verificar se a lista está vazia
+        if (indice < 0) {
             throw new OutofBoundsException("Indice invalido");
         }
 
-        return companiesOfUser.get(indice).getId();
+        // Verificar se existem empresas com o nome fornecido
+        if (empresasDoUsuario.isEmpty()) {
+            throw new UnregisteredException("Nao existe empresa com esse nome");
+        }
+
+        // Verificar se o índice é maior que o tamanho da lista de empresas
+        if (indice >= empresasDoUsuario.size()) {
+            throw new OutofBoundsException("Indice maior que o esperado");
+        }
+
+        // Retornar o ID da empresa correspondente ao índice
+        return empresasDoUsuario.get(indice).getId();
     }
+
 
 
     public static int getIndexByNome(List<Empresa> empresas, String nome) {
@@ -333,19 +398,19 @@ public class Gerenciamento {
 
 
     public int criarProduto(int idEmpresa, String nome, float valor, String categoria) throws ProductCreationException {
-        Empresa comp = persistenciaEmpresa.buscar(idEmpresa);
+        Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
 
         testProductInvalid(nome, valor, categoria);
 
-        for (Produto produto : comp.getProd_list()) {
+        for (Produto produto : empresa.getProd_list()) {
             if (produto.getNome().equals(nome)){
                 throw new ProductCreationException("Ja existe um produto com esse nome para essa empresa");
             }
         }
 
-        Produto produto = new Produto(nome, valor, categoria, comp.getId());
+        Produto produto = new Produto(nome, valor, categoria, empresa.getId());
         persistenciaProduto.salvar(produto);
-        comp.addProd_list(produto);
+        empresa.addProd_list(produto);
         return produto.getId();
     }
 
@@ -367,8 +432,8 @@ public class Gerenciamento {
 
 
     public String getProduto(String nome, int idEmpresa, String atributo) throws InvalidAtributeException, UnregisteredException {
-        Empresa comp = persistenciaEmpresa.buscar(idEmpresa);
-        List<Produto> list = comp.getProd_list();
+        Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
+        List<Produto> list = empresa.getProd_list();
 
         if (atributo == null || atributo.isEmpty()) {
             throw new InvalidAtributeException();
@@ -380,7 +445,7 @@ public class Gerenciamento {
                     case "nome" -> prod.getNome();
                     case "valor" -> String.format(Locale.US, "%.2f", prod.getValor());
                     case "categoria" -> prod.getCategoria();
-                    case "empresa" -> String.valueOf(comp.getNome());
+                    case "empresa" -> String.valueOf(empresa.getNome());
                     default -> throw new InvalidAtributeException("Atributo nao existe");
                 };
             }
@@ -390,13 +455,13 @@ public class Gerenciamento {
 
 
     public String listarProdutos(int idEmpresa) throws UnregisteredException {
-        Empresa comp = persistenciaEmpresa.buscar(idEmpresa);
+        Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
 
-        if (comp == null){
+        if (empresa == null){
             throw new UnregisteredException("Empresa nao encontrada");
         }
 
-        return "{" + comp.getProd_list() + "}";
+        return "{" + empresa.getProd_list() + "}";
     }
 
 
@@ -507,20 +572,107 @@ public class Gerenciamento {
         throw new UnregisteredException("Produto nao encontrado");
     }
 
-    //User Story 5
+    public int alterarFuncionamento(int mercadoId, String abre, String fecha) throws UnregisteredException{
+        if (abre == null){
+            throw new UnregisteredException("Horarios invalidos");
+        }
+        if (fecha == null){
+            throw new UnregisteredException("Horarios invalidos");
+        }
 
-    //TODO: Voltar aqui para fazer o que for necessário.
-    //alterarFuncionamento(int mercado, String: abre, String fecha)
-    // descrição: Altera o horario de funcionamento do Mercado.
-    // retorno: Sem retorno
+        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")){
+            throw new UnregisteredException("Formato de hora invalido");
+        }
+        String[] abreParts = abre.split(":");
+        String[] fechaParts = fecha.split(":");
 
-    //User Story 6
+        int abreHora = Integer.parseInt(abreParts[0]);
+        int abreMinuto = Integer.parseInt(abreParts[1]);
 
-    //TODO: Voltar aqui para fazer o que for necessário.
+        int fechaHora = Integer.parseInt(fechaParts[0]);
+        int fechaMinuto = Integer.parseInt(fechaParts[1]);
 
-    // User Story 7
+        if (abreHora > 23 || fechaHora > 23 || abreMinuto > 59 || fechaMinuto > 59) {
+            throw new UnregisteredException("Horarios invalidos");
+        }
 
-    //TODO: Voltar aqui para fazer o que for necessário.
+        if (fechaHora < abreHora || (fechaHora == abreHora && fechaMinuto < abreMinuto)) {
+            throw new UnregisteredException("Horarios invalidos");
+        }
+
+        Empresa empresa = persistenciaEmpresa.buscar(mercadoId);
+
+        try {
+            Mercado mercado = (Mercado) empresa;
+            mercado.getTipoMercado();
+        } catch (ClassCastException e) {
+            throw new UnregisteredException("Nao e um mercado valido");
+        }
+        Mercado mercado = (Mercado) empresa;
+
+        mercado.setAbre(abre);
+        mercado.setFecha(fecha);
+
+        persistenciaEmpresa.atualizar();
+        return -1;
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador) throws WrongTypeUserException, UnregisteredException {
+        Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
+        if (empresa == null) {
+            throw new UnregisteredException("Empresa nao encontrada");
+        }
+        if (idEntregador <= 0 || idEmpresa <= 0) {
+            throw new UnregisteredException("ID de empresa ou entregador inválido");
+        }
+
+        Usuario usuario = persistenciaUsuario.buscar(idEntregador);
+        if (usuario == null || !usuario.getClass().getSimpleName().equals("Entregador")) {
+            throw new WrongTypeUserException("Usuario nao e um entregador");
+        }
+
+        if (empresa.getListaEntregadores().contains(usuario)) {
+            throw new UnregisteredException("Entregador ja cadastrado nesta empresa");
+        }
+
+        empresa.addEntregador((Entregador) usuario);
+    }
+
+    public String getEntregadores(int idEmpresa) throws UnregisteredException {
+        Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
+        if (empresa == null) {
+            throw new UnregisteredException("Empresa nao encontrada");
+        }
+
+
+        List<String> emails = empresa.getListaEntregadores()
+                .stream()
+                .map(Entregador::getEmail)
+                .collect(Collectors.toList());
+
+        return "{[" + String.join(", ", emails) + "]}";
+    }
+
+    public String getEmpresas(int idEntregador) throws WrongTypeUserException {
+
+        Usuario entregador = persistenciaUsuario.buscar(idEntregador);
+
+        if (entregador == null || !entregador.getClass().getSimpleName().equals("Entregador")) {
+            throw new WrongTypeUserException("Usuario nao e um entregador");
+        }
+
+        List<Empresa> empresasDoEntregador = persistenciaEmpresa.listar()
+                .stream()
+                .filter(empresa -> empresa.getListaEntregadores().contains(entregador))
+                .collect(Collectors.toList());
+
+        String empresasFormatadas = empresasDoEntregador.stream()
+                .map(empresa -> "[" + empresa.getNome() + ", " + empresa.getEndereco() + "]")
+                .collect(Collectors.joining(", "));
+
+        return "{[" + empresasFormatadas + "]}";
+    }
+
 
     // User Story 8
 

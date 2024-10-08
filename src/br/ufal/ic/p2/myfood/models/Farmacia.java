@@ -4,13 +4,15 @@ import br.ufal.ic.p2.myfood.exceptions.CompanyCreationException;
 
 public class Farmacia extends Empresa {
     private boolean aberto24Horas;
+    private int numeroFuncionarios;
 
     public Farmacia(){}
 
-    public Farmacia(String nome, String endereco, Dono dono, boolean aberto24Horas){
+    public Farmacia(String nome, String endereco, Dono dono, boolean aberto24Horas, int numeroFuncionarios){
 
         super(nome, endereco, dono);
         this.aberto24Horas = aberto24Horas;
+        this.numeroFuncionarios = numeroFuncionarios;
     }
 
     public Boolean getAberto24Horas() {
@@ -21,13 +23,20 @@ public class Farmacia extends Empresa {
         this.aberto24Horas = aberto24Horas;
     }
 
-    @Override
-    public String getAtributo(String atributo) {
-        if (atributo.equals("aberto24Horas")) {
-            return String.valueOf(aberto24Horas);
-        }
-        return super.getAtributo(atributo);
+    public int getNumeroFuncionarios(){
+        return numeroFuncionarios;
     }
 
+    public void setNumeroFuncionarios(int numeroFuncionarios) {
+        this.numeroFuncionarios = numeroFuncionarios;
+    }
 
+    @Override
+    public String getAtributo(String atributo) {
+        return switch (atributo) {
+            case "aberto24Horas" -> String.valueOf(aberto24Horas);
+            case "numeroFuncionarios" -> String.valueOf(numeroFuncionarios);
+            default -> super.getAtributo(atributo);
+        };
+    }
 }

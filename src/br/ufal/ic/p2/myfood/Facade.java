@@ -1,6 +1,9 @@
 package br.ufal.ic.p2.myfood;
 
 import br.ufal.ic.p2.myfood.exceptions.*;
+import br.ufal.ic.p2.myfood.models.Entregador;
+
+import java.util.List;
 
 public class Facade {
     private final Gerenciamento gerenciamento = new Gerenciamento();
@@ -99,11 +102,29 @@ public class Facade {
         return gerenciamento.criarEmpresa(tipoEmpresa, dono, nome, endereco, abre, fecha, tipoMercado);
     }
 
+    public int alterarFuncionamento(int mercado, String abre, String fecha) throws UnregisteredException {
+        return gerenciamento.alterarFuncionamento(mercado, abre, fecha);
+    }
+
     // User Story 6
 
-    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas) throws CompanyCreationException, WrongTypeUserException {
-        return gerenciamento.criarEmpresa(tipoEmpresa, dono, nome, endereco, aberto24Horas);
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios) throws CompanyCreationException, WrongTypeUserException {
+        return gerenciamento.criarEmpresa(tipoEmpresa, dono, nome, endereco, aberto24Horas, numeroFuncionarios);
     }
-    
 
+    //User Story 7
+    public void criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa) throws UserCreationException {
+        gerenciamento.criarUsuario(nome, email, senha, endereco, veiculo, placa);
+    }
+
+    public void cadastrarEntregador(int idEmpresa, int idEntregador) throws UnregisteredException, WrongTypeUserException {
+        gerenciamento.cadastrarEntregador(idEmpresa, idEntregador);    }
+
+    public String getEntregadores(int idEmpresa) throws UnregisteredException {
+        return gerenciamento.getEntregadores(idEmpresa);
+    }
+
+    public String getEmpresas(int idEntregador) throws WrongTypeUserException{
+        return gerenciamento.getEmpresas(idEntregador);
+    }
 }

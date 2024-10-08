@@ -10,6 +10,7 @@ public class Empresa {
     private String endereco;
     private Dono dono;
     private List<Produto> prod_list;
+    private List<Entregador> entreg_list;
 
   
     public Empresa() {
@@ -21,9 +22,8 @@ public class Empresa {
         this.endereco = endereco;
         this.dono = dono;
         prod_list = new ArrayList<>();
+        entreg_list = new ArrayList<>();
     }
-
-
 
     public int getId() {
         return id;
@@ -76,6 +76,17 @@ public class Empresa {
 
     public void addProd_list(Produto produto){
         this.prod_list.add(produto);
+    }
+
+    public List<Entregador> getListaEntregadores(){
+        return entreg_list;
+    }
+    public void setEntregadores(List<Entregador> entreg_list) {
+        this.entreg_list = entreg_list;
+    }
+
+    public void addEntregador(Entregador entregador){
+        this.entreg_list.add(entregador);
     }
 
     @Override

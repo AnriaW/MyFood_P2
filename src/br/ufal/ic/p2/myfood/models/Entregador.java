@@ -16,12 +16,10 @@ public class Entregador extends Usuario{
     }
 
     public String getVeiculo() {
-
         return veiculo;
     }
 
     public void setVeiculo(String veiculo) {
-
         this.veiculo = veiculo;
     }
 

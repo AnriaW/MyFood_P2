@@ -63,17 +63,17 @@ id3=login email="roberto@ufal.com.br" senha="123senha"
 # testes de todas as outras combinações importantes para o comando criarEmpresa para mercado
 ###################
 
-eid1=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Segura N 123" abre="07:30", fecha="21:00" tipoMercado="supermercado"
+eid1=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Segura N 123" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
-eid2=criarEmpresa tipoEmpresa="mercado"  dono=${id2} nome="Conveniencias do Carlos" endereco="Rua Segura N 123" abre="06:30", fecha="23:59" tipoMercado="minimercado"
+eid2=criarEmpresa tipoEmpresa="mercado"  dono=${id2} nome="Conveniencias do Carlos" endereco="Rua Segura N 123" abre="06:30" fecha="23:59" tipoMercado="minimercado"
 
 # Um dono diferente não pode cadastrar uma empresa com o mesmo nome de uma existente, o dono de um restaurante pode cadastrar uma nova empresa desde que seja em endereço diferente.
 
-expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="mercado" dono=${id3} nome="Mercado do Carlos" endereco="Rua Segura N 987" abre="07:30", fecha="21:00" tipoMercado="supermercado"
+expectError "Empresa com esse nome ja existe" criarEmpresa tipoEmpresa="mercado" dono=${id3} nome="Mercado do Carlos" endereco="Rua Segura N 987" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
-expectError "Proibido cadastrar duas empresas com o mesmo nome e local" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Segura N 123" abre="07:30", fecha="21:00" tipoMercado="supermercado"
+expectError "Proibido cadastrar duas empresas com o mesmo nome e local" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Segura N 123" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
-expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="0730", fecha="21:00" tipoMercado="atacadista"
+expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="0730" fecha="21:00" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="12:54" fecha="2322" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="120:54" fecha="23:22" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="12:540" fecha="23:22" tipoMercado="atacadista"
@@ -81,24 +81,24 @@ expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=$
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="12:54" fecha="03:220" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="2:54" fecha="03:22" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="02:54" fecha="03:2" tipoMercado="atacadista"
-expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="07:30", fecha="21:00" tipoMercado="atacadista"
+expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre=":30" fecha="21:00" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="02:5" fecha="03:22" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="" fecha="25:22" tipoMercado="atacadista"
 expectError "Formato de hora invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha="" tipoMercado="atacadista"
 expectError "Horarios invalidos" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha="03:22" tipoMercado="atacadista"
 expectError "Horarios invalidos" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha="25:22" tipoMercado="atacadista"
 
-eid3=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="07:30", fecha="21:00" tipoMercado="atacadista"
+eid3=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="07:30" fecha="21:00" tipoMercado="atacadista"
 
-expectError "Tipo de empresa invalido" criarEmpresa tipoEmpresa= dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52", fecha="21:00" tipoMercado="atacadista"
-expectError "Nome invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome= endereco="Rua Otima N 852" abre="20:52", fecha="21:00" tipoMercado="atacadista"
-expectError "Endereco invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco= abre="20:52", fecha="21:00" tipoMercado="atacadista"
+expectError "Tipo de empresa invalido" criarEmpresa tipoEmpresa= dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha="21:00" tipoMercado="atacadista"
+expectError "Nome invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome= endereco="Rua Otima N 852" abre="20:52" fecha="21:00" tipoMercado="atacadista"
+expectError "Endereco da empresa invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco= abre="20:52" fecha="21:00" tipoMercado="atacadista"
 expectError "Horario invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre= fecha="23:22" tipoMercado="atacadista"
 expectError "Horario invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha= tipoMercado="atacadista"
 expectError "Tipo de mercado invalido" criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="20:52" fecha="23:22" tipoMercado=
 
 # Apenas usuários do tipo dono de mercado podem criar uma empresa.
-expectError "Usuario nao pode criar uma empresa" criarEmpresa tipoEmpresa="mercado" dono=${id1} nome="Mercado do  Lucas" endereco="Rua Amigavel N 22" abre="07:30", fecha="21:00" tipoMercado="supermercado"
+expectError "Usuario nao pode criar uma empresa" criarEmpresa tipoEmpresa="mercado" dono=${id1} nome="Mercado do  Lucas" endereco="Rua Amigavel N 22" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
 # Obtendo donos
 expectError "Usuario nao pode criar uma empresa" getEmpresasDoUsuario idDono=${id1}
@@ -106,7 +106,7 @@ expect "{[[Mercado do Carlos, Rua Segura N 123], [Conveniencias do Carlos, Rua S
 expect "{[]}" getEmpresasDoUsuario idDono=${id3}
 
 # Obtendo os dados dos mercados. 
-eid4=criarEmpresa tipoEmpresa="mercado" dono=${id3} nome="Mercado do Roberto" endereco="Rua Segura N 123" abre="07:30", fecha="21:00" tipoMercado="supermercado"
+eid4=criarEmpresa tipoEmpresa="mercado" dono=${id3} nome="Mercado do Roberto" endereco="Rua Segura N 123" abre="07:30" fecha="21:00" tipoMercado="supermercado"
 
 expect "Mercado do Roberto" getAtributoEmpresa empresa=${eid4} atributo="nome"
 expect "Rua Segura N 123" getAtributoEmpresa empresa=${eid4} atributo="endereco"
@@ -244,6 +244,8 @@ expectError "Horarios invalidos" alterarFuncionamento mercado=${eid4} abre="20:5
 eid5=criarEmpresa tipoEmpresa="restaurante" dono=${id2} nome="Pastelaria do Carlos" endereco="Rua Segura N 987" tipoCozinha="brasileira"
 
 expectError "Nao e um mercado valido" alterarFuncionamento mercado=${eid5} abre="05:25" fecha="22:00"
+
+alterarFuncionamento mercado=${eid4} abre="05:25" fecha="22:00"
 
 expect "05:25" getAtributoEmpresa empresa=${eid4} atributo="abre"
 expect "22:00" getAtributoEmpresa empresa=${eid4} atributo="fecha"

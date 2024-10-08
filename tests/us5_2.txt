@@ -1,5 +1,6 @@
 # User Story 5 - Criação de Mercados - verificacao de persistencia
 
+id1=login email="lucas@ufal.com.br" senha="123senha"
 id2=login email="carlos@ufal.com.br" senha="123senha"
 id3=login email="roberto@ufal.com.br" senha="123senha"
 
@@ -7,18 +8,22 @@ eid1=getIdEmpresa idDono=${id2} nome="Mercado do Carlos" indice=0
 eid2=getIdEmpresa idDono=${id2} nome="Conveniencias do Carlos" indice=0
 eid3=getIdEmpresa idDono=${id2} nome="Mercado do Carlos" indice=1
 eid4=getIdEmpresa idDono=${id3} nome="Mercado do Roberto" indice=0
+eid5=getIdEmpresa idDono=${id2} nome="Pastelaria do Carlos" indice=0
 
-pe1=getNumeroPedido cliente=${id2} empresa=${eid1} indice=0
-pe2=getNumeroPedido cliente=${id2} empresa=${eid2} indice=0
+pe1=getNumeroPedido cliente=${id1} empresa=${eid1} indice=0
+pe2=getNumeroPedido cliente=${id1} empresa=${eid2} indice=0
 
-expect "{[[Mercado do Carlos, Rua Segura N 123], [Conveniencias do Carlos,Rua Segura N 123], [Mercado do Carlos, Rua Otima N 852]]}" getEmpresasDoUsuario idDono=${id2}
-expect "{[]}" getEmpresasDoUsuario idDono=${id3}
+expect "{[[Mercado do Carlos, Rua Segura N 123], [Conveniencias do Carlos, Rua Segura N 123], [Mercado do Carlos, Rua Otima N 852], [Pastelaria do Carlos, Rua Segura N 987]]}" getEmpresasDoUsuario idDono=${id2}
+expect "{[[Mercado do Roberto, Rua Segura N 123]]}" getEmpresasDoUsuario idDono=${id3}
 
-expect "Mercado do Roberto" getAtributoEmpresa empresa=${eid3} atributo="nome"
-expect "Rua Segura N 123" getAtributoEmpresa empresa=${eid3} atributo="endereco"
+eid3=criarEmpresa tipoEmpresa="mercado" dono=${id2} nome="Mercado do Carlos" endereco="Rua Otima N 852" abre="07:30" fecha="21:00" tipoMercado="atacadista"
+
+
+expect "Mercado do Carlos" getAtributoEmpresa empresa=${eid3} atributo="nome"
+expect "Rua Otima N 852" getAtributoEmpresa empresa=${eid3} atributo="endereco"
 expect "07:30" getAtributoEmpresa empresa=${eid3} atributo="abre"
 expect "21:00" getAtributoEmpresa empresa=${eid3} atributo="fecha"
-expect "RobertoDono" getAtributoEmpresa empresa=${eid3} atributo="dono"
+expect "CarlosDono" getAtributoEmpresa empresa=${eid3} atributo="dono"
 
 expect "supermercado" getAtributoEmpresa empresa=${eid1} atributo="tipoMercado"
 expect "minimercado" getAtributoEmpresa empresa=${eid2} atributo="tipoMercado"
