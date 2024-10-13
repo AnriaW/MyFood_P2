@@ -10,7 +10,7 @@ public class Empresa {
     private String endereco;
     private Dono dono;
     private List<Produto> prod_list;
-    private List<Entregador> entreg_list;
+    private List<Entregador> entreg_list = new ArrayList<>();
 
   
     public Empresa() {
@@ -21,8 +21,8 @@ public class Empresa {
         this.nome = nome;
         this.endereco = endereco;
         this.dono = dono;
-        prod_list = new ArrayList<>();
-        entreg_list = new ArrayList<>();
+        this.prod_list = new ArrayList<>();
+        this.entreg_list = new ArrayList<>();
     }
 
     public int getId() {
@@ -81,6 +81,7 @@ public class Empresa {
     public List<Entregador> getListaEntregadores(){
         return entreg_list;
     }
+
     public void setEntregadores(List<Entregador> entreg_list) {
         this.entreg_list = entreg_list;
     }
@@ -88,7 +89,6 @@ public class Empresa {
     public void addEntregador(Entregador entregador){
         this.entreg_list.add(entregador);
     }
-
     @Override
     public String toString() {
         return "[" + nome + ", " + endereco + "]";

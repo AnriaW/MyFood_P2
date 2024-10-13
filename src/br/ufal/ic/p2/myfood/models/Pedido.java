@@ -28,6 +28,7 @@ public class Pedido {
 
 
     public int getNumero() {
+
         return numero;
     }
 

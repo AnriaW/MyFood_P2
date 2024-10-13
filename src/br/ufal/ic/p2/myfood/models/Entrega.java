@@ -55,12 +55,12 @@ public class Entrega {
     public String getAtributo(String atributo) throws InvalidAtributeException {
 
         return switch (atributo) {
-            case "cliente" -> pedido.getCliente().getNome();
-            case "empresa" -> pedido.getEmpresa().getNome();
-            case "pedido" -> String.valueOf(pedido.getNumero());
+            case "cliente" -> getPedido().getCliente().getNome();
+            case "empresa" -> getPedido().getEmpresa().getNome();
+            case "pedido" -> String.valueOf(getPedido().getNumero());
             case "entregador" -> entregador.getNome();
             case "destino" -> getDestino();
-            case "produtos" -> "{"+pedido.getProd_list().toString()+"}";
+            case "produtos" -> "{"+getPedido().getProd_list().toString()+"}";
             default -> throw new InvalidAtributeException("Atributo nao existe");
         };
     }

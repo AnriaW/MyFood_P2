@@ -7,6 +7,7 @@ public class Entregador extends Usuario{
     private String veiculo;
     private String placa;
     private boolean emEntrega = false;
+    private List<Empresa> empresas = new ArrayList<>();
 
     public Entregador(){}
 
@@ -24,12 +25,20 @@ public class Entregador extends Usuario{
         this.veiculo = veiculo;
     }
 
-    public String getPlaca(){
+    public String getPlaca() {
         return placa;
     }
 
-    public void setPlaca(String Placa){
+    public void setPlaca(String placa) {
         this.placa = placa;
+    }
+
+    public List<Empresa> getEmpresas() {
+        return empresas;
+    }
+
+    public void adicionarEmpresa(Empresa empresa) {
+        empresas.add(empresa);
     }
 
     public boolean isEmEntrega() {
@@ -38,6 +47,11 @@ public class Entregador extends Usuario{
 
     public void setEmEntrega(boolean emEntrega) {
         this.emEntrega = emEntrega;
+    }
+
+    @Override
+    public boolean isEntregador() {
+        return true;
     }
 
     @Override

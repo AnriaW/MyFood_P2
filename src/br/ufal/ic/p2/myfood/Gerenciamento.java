@@ -636,7 +636,7 @@ public class Gerenciamento {
         }
 
         Usuario usuario = persistenciaUsuario.buscar(idEntregador);
-        if (usuario == null || !usuario.getClass().getSimpleName().equals("Entregador")) {
+        if (usuario == null || !usuario.isEntregador()) {
             throw new WrongTypeUserException("Usuario nao e um entregador");
         }
 
@@ -645,6 +645,7 @@ public class Gerenciamento {
         }
 
         empresa.addEntregador((Entregador) usuario);
+
     }
 
     public String getEntregadores(int idEmpresa) throws UnregisteredException {
@@ -653,20 +654,19 @@ public class Gerenciamento {
             throw new UnregisteredException("Empresa nao encontrada");
         }
 
-
         List<String> emails = empresa.getListaEntregadores()
                 .stream()
                 .map(Entregador::getEmail)
                 .collect(Collectors.toList());
 
+
         return "{[" + String.join(", ", emails) + "]}";
     }
 
     public String getEmpresas(int idEntregador) throws WrongTypeUserException {
-
         Usuario entregador = persistenciaUsuario.buscar(idEntregador);
 
-        if (entregador == null || !entregador.getClass().getSimpleName().equals("Entregador")) {
+        if (entregador == null || !entregador.isEntregador()) {
             throw new WrongTypeUserException("Usuario nao e um entregador");
         }
 
@@ -683,15 +683,12 @@ public class Gerenciamento {
     }
 
     public int obterPedido(int idEntregador) throws WrongTypeUserException, UnregisteredException, StatusException {
-        // Buscar o entregador a partir do ID
         Usuario entregador = persistenciaUsuario.buscar(idEntregador);
 
-        // Verificar se é realmente um entregador válido
         if (entregador == null || !entregador.getClass().getSimpleName().equals("Entregador")) {
             throw new WrongTypeUserException("Usuario nao e um entregador.");
         }
 
-        // Listar as empresas associadas ao entregador
         List<Empresa> empresasDoEntregador = persistenciaEmpresa.listar()
                 .stream()
                 .filter(empresa -> empresa.getListaEntregadores().contains(entregador))
@@ -701,7 +698,6 @@ public class Gerenciamento {
             throw new UnregisteredException("Entregador nao esta em nenhuma empresa.");
         }
 
-        // Filtrar os pedidos prontos das empresas associadas ao entregador
         List<Pedido> pedidosProntos = persistenciaPedido.listar()
                 .stream()
                 .filter(pedido -> empresasDoEntregador.contains(pedido.getEmpresa()) && pedido.getEstado().equals("pronto"))
@@ -711,29 +707,20 @@ public class Gerenciamento {
             throw new StatusException("Nao existe pedido para entrega");
         }
 
-        // Priorizar pedidos de farmácia
         Pedido pedidoSelecionado = pedidosProntos.stream()
                 .filter(p -> p.getEmpresa().getClass().getSimpleName().equals("Farmacia"))
                 .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido de farmácia mais antigo
                 .orElse(null);
 
-        // Se não houver pedidos de farmácia, selecionar o pedido mais antigo
         if (pedidoSelecionado == null) {
             pedidoSelecionado = pedidosProntos.stream()
                     .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido mais antigo no geral
                     .orElseThrow(() -> new StatusException("Nao foi possivel selecionar um pedido"));
         }
 
-        // Imprimir para depuração
-        System.out.println("Pedido selecionado: " + pedidoSelecionado.getNumero() +
-                ", Tipo de empresa: " + pedidoSelecionado.getEmpresa().getClass().getSimpleName());
 
-        // Retornar o número do pedido selecionado
         return pedidoSelecionado.getNumero();
     }
-
-
-
 
     public int criarEntrega(int idPedido, int idEntregador, String destino) throws UnregisteredException, StatusException {
         Pedido pedido = persistenciaPedido.buscar(idPedido);
@@ -766,14 +753,6 @@ public class Gerenciamento {
         persistenciaEntrega.salvar(novaEntrega);
         persistenciaPedido.atualizar();
         persistenciaUsuario.atualizar();
-
-        System.out.println("Pedido empresa: " + pedido.getEmpresa().getClass().getSimpleName());
-        System.out.println("Entregador em entrega: " + entregador.isEmEntrega());
-
-        Empresa empresaDoPedido = pedido.getEmpresa();
-        System.out.println("Empresa do pedido: " + empresaDoPedido.getNome());
-
-
 
         return novaEntrega.getId();
     }

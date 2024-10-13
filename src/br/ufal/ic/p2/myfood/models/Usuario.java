@@ -60,6 +60,10 @@ public class Usuario implements Serializable {
         this.endereco = endereco;
     }
 
+    public boolean isEntregador() {
+        return false;
+    }
+
     public String getAtributo(String atributo) {
         return switch (atributo) {
             case "id" -> String.valueOf(id);

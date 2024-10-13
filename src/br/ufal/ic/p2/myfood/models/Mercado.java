@@ -24,7 +24,7 @@ public class Mercado extends Empresa {
     }
 
     public String getFecha(){
-        return abre;
+        return fecha;
     }
 
     public void setFecha(String fecha){
