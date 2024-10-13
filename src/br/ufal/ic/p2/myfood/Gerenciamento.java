@@ -6,6 +6,7 @@ import br.ufal.ic.p2.myfood.models.*;
 import br.ufal.ic.p2.myfood.persistence.*;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -16,12 +17,14 @@ public class Gerenciamento {
     public static Persistencia<Empresa> persistenciaEmpresa = new PersistenciaEmpresa();
     public static Persistencia<Produto> persistenciaProduto = new PersistenciaProduto();
     public static Persistencia<Pedido> persistenciaPedido = new PersistenciaPedido();
+    public static Persistencia<Entrega> persistenciaEntrega = new PersistenciaEntrega();
 
     public Gerenciamento() {
         persistenciaUsuario.iniciar();
         persistenciaEmpresa.iniciar();
         persistenciaProduto.iniciar();
         persistenciaPedido.iniciar();
+        persistenciaEntrega.iniciar();
 
         for (Usuario usuario : persistenciaUsuario.listar()) {
             if (usuario instanceof Dono dono) {
@@ -86,7 +89,7 @@ public class Gerenciamento {
 
     }
 
-    public void criarUsuario(String nome, String email, String senha, String endereco) throws UserCreationException{
+    public void criarUsuario(String nome, String email, String senha, String endereco) throws UserCreationException {
 
         testUserInvalid(nome, email, senha, endereco);
 
@@ -161,8 +164,7 @@ public class Gerenciamento {
         throw new InvalidCredentialsException();
     }
 
-    // TODO: Modificar o criar empresa para que tenhamos Farmácia e Mercado
-    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String tipoCozinha) throws CompanyCreationException, WrongTypeUserException{
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String tipoCozinha) throws CompanyCreationException, WrongTypeUserException {
 
         if (nome == null || nome.isEmpty()) {
             throw new CompanyCreationException("Nome invalido");
@@ -195,7 +197,7 @@ public class Gerenciamento {
         return -1;
     }
 
-    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado) throws CompanyCreationException, WrongTypeUserException{
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado) throws CompanyCreationException, WrongTypeUserException {
 
         if (nome == null || nome.isEmpty()) {
             throw new CompanyCreationException("Nome invalido");
@@ -203,21 +205,21 @@ public class Gerenciamento {
         if (endereco == null || endereco.isEmpty()) {
             throw new CompanyCreationException("Endereco da empresa invalido");
         }
-        if (tipoEmpresa == null || tipoEmpresa.isEmpty()){
+        if (tipoEmpresa == null || tipoEmpresa.isEmpty()) {
             throw new CompanyCreationException("Tipo de empresa invalido");
         }
-        if (abre == null){
-            throw new CompanyCreationException("Horario invalido");
+        if (abre == null) {
+            throw new CompanyCreationException("Horarios invalido");
         }
-        if (fecha == null){
-            throw new CompanyCreationException("Horario invalido");
+        if (fecha == null) {
+            throw new CompanyCreationException("Horarios invalido");
         }
 
-        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")){
+        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")) {
             throw new CompanyCreationException("Formato de hora invalido");
         }
 
-        if(tipoMercado == null || tipoMercado.isEmpty()){
+        if (tipoMercado == null || tipoMercado.isEmpty()) {
             throw new CompanyCreationException("Tipo de mercado invalido");
         }
 
@@ -262,7 +264,7 @@ public class Gerenciamento {
         return -1;
     }
 
-    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios) throws CompanyCreationException, WrongTypeUserException{
+    public int criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios) throws CompanyCreationException, WrongTypeUserException {
 
         if (nome == null || nome.isEmpty()) {
             throw new CompanyCreationException("Nome invalido");
@@ -270,7 +272,7 @@ public class Gerenciamento {
         if (endereco == null || endereco.isEmpty()) {
             throw new CompanyCreationException("Endereco da empresa invalido");
         }
-        if (tipoEmpresa == null || tipoEmpresa.isEmpty()){
+        if (tipoEmpresa == null || tipoEmpresa.isEmpty()) {
             throw new CompanyCreationException("Tipo de empresa invalido");
         }
 
@@ -370,14 +372,13 @@ public class Gerenciamento {
     }
 
 
-
     public static int getIndexByNome(List<Empresa> empresas, String nome) {
         for (int i = 0; i < empresas.size(); i++) {
             if (empresas.get(i).getNome().equals(nome)) {
-                return i;  
+                return i;
             }
         }
-        return -1;  
+        return -1;
     }
 
 
@@ -403,7 +404,7 @@ public class Gerenciamento {
         testProductInvalid(nome, valor, categoria);
 
         for (Produto produto : empresa.getProd_list()) {
-            if (produto.getNome().equals(nome)){
+            if (produto.getNome().equals(nome)) {
                 throw new ProductCreationException("Ja existe um produto com esse nome para essa empresa");
             }
         }
@@ -457,7 +458,7 @@ public class Gerenciamento {
     public String listarProdutos(int idEmpresa) throws UnregisteredException {
         Empresa empresa = persistenciaEmpresa.buscar(idEmpresa);
 
-        if (empresa == null){
+        if (empresa == null) {
             throw new UnregisteredException("Empresa nao encontrada");
         }
 
@@ -469,7 +470,7 @@ public class Gerenciamento {
         Usuario temp_cliente = persistenciaUsuario.buscar(idCliente);
         List<Pedido> pedidosClienteEmpresa = pedidosClienteEmpresa(idCliente, idEmpresa);
 
-        if (temp_cliente.getClass().getSimpleName().equals("Dono")){
+        if (temp_cliente.getClass().getSimpleName().equals("Dono")) {
             throw new WrongTypeUserException("Dono de empresa nao pode fazer um pedido");
         } else if (!pedidosClienteEmpresa.isEmpty()) {
             throw new OrderCreationException();
@@ -489,7 +490,7 @@ public class Gerenciamento {
             throw new UnregisteredException("Nao existe pedido em aberto");
         }
 
-        if (!(tempPedido.getEstado().equals("aberto"))){
+        if (!(tempPedido.getEstado().equals("aberto"))) {
             throw new StatusException("Nao e possivel adcionar produtos a um pedido fechado");
         }
 
@@ -510,9 +511,9 @@ public class Gerenciamento {
         String nomeEmpresa = persistenciaEmpresa.buscar(idEmpresa).getNome();
 
         List<Pedido> pedidosClienteEmpresa = persistenciaPedido.listar()
-                        .stream()
-                        .filter(pedido -> pedido.getCliente().getNome().equals(nomeCliente) && pedido.getEmpresa().getNome().equals(nomeEmpresa))
-                        .toList();
+                .stream()
+                .filter(pedido -> pedido.getCliente().getNome().equals(nomeCliente) && pedido.getEmpresa().getNome().equals(nomeEmpresa))
+                .toList();
 
         return pedidosClienteEmpresa.get(indice).getNumero();
     }
@@ -545,10 +546,21 @@ public class Gerenciamento {
             throw new UnregisteredException("Pedido nao encontrado");
         }
 
-        tempPedido.changeEstado();
+        tempPedido.mudarEstado();
 
     }
 
+    public void liberarPedido(int idPedido) throws UnregisteredException, StatusException {
+        if (String.valueOf(idPedido) == null || String.valueOf(idPedido).isEmpty()) {
+            throw new UnregisteredException("Nao e possivel liberar um produto que nao esta sendo preparado");
+        }
+
+        Pedido tempPedido = persistenciaPedido.buscar(idPedido);
+        if (tempPedido == null) {
+            throw new UnregisteredException("Pedido nao encontrado");
+        }
+        tempPedido.mudarEstadoNovamente();
+    }
 
     public void removerProduto(int idPedido, String produto) throws InvalidAtributeException, UnregisteredException, StatusException {
         if (produto == null || produto.isEmpty()) {
@@ -562,9 +574,9 @@ public class Gerenciamento {
 
         List<Produto> listProd = ped.getProd_list();
         for (Produto prod : listProd) {
-            if (prod.getNome().equals(produto)){
-                    ped.removeProductFromList(prod);
-                    persistenciaPedido.atualizar();
+            if (prod.getNome().equals(produto)) {
+                ped.removeProductFromList(prod);
+                persistenciaPedido.atualizar();
                 return;
             }
         }
@@ -572,15 +584,15 @@ public class Gerenciamento {
         throw new UnregisteredException("Produto nao encontrado");
     }
 
-    public int alterarFuncionamento(int mercadoId, String abre, String fecha) throws UnregisteredException{
-        if (abre == null){
+    public int alterarFuncionamento(int mercadoId, String abre, String fecha) throws UnregisteredException {
+        if (abre == null) {
             throw new UnregisteredException("Horarios invalidos");
         }
-        if (fecha == null){
+        if (fecha == null) {
             throw new UnregisteredException("Horarios invalidos");
         }
 
-        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")){
+        if (!abre.matches("^\\d{2}:\\d{2}$") || !fecha.matches("^\\d{2}:\\d{2}$")) {
             throw new UnregisteredException("Formato de hora invalido");
         }
         String[] abreParts = abre.split(":");
@@ -673,9 +685,126 @@ public class Gerenciamento {
         return "{[" + empresasFormatadas + "]}";
     }
 
+    public int obterPedido(int idEntregador) throws WrongTypeUserException, UnregisteredException, StatusException {
 
-    // User Story 8
+        Usuario entregador = persistenciaUsuario.buscar(idEntregador);
 
-    //TODO: Voltar aqui para fazer o que for necessário.
+        if (entregador == null || !entregador.getClass().getSimpleName().equals("Entregador")) {
+            throw new WrongTypeUserException("Usuario nao e um entregador.");
+        }
 
+        List<Empresa> empresasDoEntregador = persistenciaEmpresa.listar()
+                .stream()
+                .filter(empresa -> empresa.getListaEntregadores().contains(entregador))
+                .collect(Collectors.toList());
+
+        if (empresasDoEntregador.isEmpty()) {
+            throw new UnregisteredException("Entregador nao esta em nenhuma empresa.");
+        }
+
+        List<Pedido> pedidosProntos = new ArrayList<>();
+
+        for (Pedido pedido : persistenciaPedido.listar()) {
+
+            if (empresasDoEntregador.contains(pedido.getEmpresa()) && pedido.getEstado().equals("pronto")) {
+                pedidosProntos.add(pedido);
+            }
+        }
+
+        if (pedidosProntos.isEmpty()) {
+            throw new StatusException("Nao existe pedido para entrega");
+        }
+
+        pedidosProntos.sort((pedido1, pedido2) -> {
+            boolean empresa1EhFarmacia = pedido1.getEmpresa().getClass().getSimpleName().equals("Farmacia");
+            boolean empresa2EhFarmacia = pedido2.getEmpresa().getClass().getSimpleName().equals("Farmacia");
+
+            if (empresa1EhFarmacia && !empresa2EhFarmacia) {
+                return -1;
+            } else if (!empresa1EhFarmacia && empresa2EhFarmacia) {
+                return 1;
+            } else {
+                return Integer.compare(pedido1.getNumero(), pedido2.getNumero());
+            }
+        });
+
+        return pedidosProntos.get(0).getNumero();  // Retorna o número do pedido
+    }
+
+    public int criarEntrega(int idPedido, int idEntregador, String destino) throws UnregisteredException, StatusException {
+        Pedido pedido = persistenciaPedido.buscar(idPedido);
+        if (pedido == null) {
+            throw new UnregisteredException("Pedido nao encontrado");
+        }
+
+        Usuario usuario = persistenciaUsuario.buscar(idEntregador);
+        if (usuario == null || !(usuario instanceof Entregador)) {
+            throw new UnregisteredException("Nao e um entregador valido");
+        }
+
+        Entregador entregador = (Entregador) usuario;
+
+        if (!pedido.getEstado().equals("pronto")) {
+            throw new StatusException("Pedido nao esta pronto para entrega");
+        }
+
+        if (entregador.isEmEntrega()) {
+            throw new StatusException("Entregador ainda em entrega");
+        }
+
+        if (destino == null) {
+            destino = pedido.getCliente().getEndereco();
+        }
+
+        entregador.setEmEntrega(true);
+
+        Entrega novaEntrega = new Entrega(pedido, entregador, destino);
+        persistenciaEntrega.salvar(novaEntrega);
+
+        pedido.mudarParaEntregando();
+        persistenciaPedido.atualizar();
+        persistenciaUsuario.atualizar();  // Atualiza o status do entregador
+
+        return novaEntrega.getId();
+    }
+    public String getEntrega(int idEntrega, String atributo) throws UnregisteredException, InvalidAtributeException {
+        Entrega entrega = persistenciaEntrega.buscar(idEntrega);
+        if (entrega == null) {
+            throw new UnregisteredException("Entrega não encontrada");
+        }
+
+        if (atributo == null || atributo.trim().isEmpty()) {
+            throw new UnregisteredException("Atributo invalido");
+        }
+        return entrega.getAtributo(atributo);
+    }
+
+    public int getIdEntrega(int pedidoId) throws UnregisteredException {
+        for (Entrega entrega : persistenciaEntrega.listar()) {
+            if (entrega.getPedido().getNumero() == pedidoId) {
+                return entrega.getId();
+            }
+        }
+
+        throw new UnregisteredException("Nao existe entrega com esse id");
+    }
+
+    public void entregar(int entregaId) throws UnregisteredException {
+
+        Entrega entrega = persistenciaEntrega.buscar(entregaId);
+
+        if (entrega == null) {
+            throw new UnregisteredException("Nao existe nada para ser entregue com esse id");
+        }
+
+        Pedido pedido = entrega.getPedido();
+        pedido.getEntregar();
+
+        Entregador entregador = entrega.getEntregador();
+        entregador.setEmEntrega(false);
+
+        persistenciaPedido.atualizar();
+        persistenciaEntrega.atualizar();
+        persistenciaUsuario.atualizar();
+    }
 }

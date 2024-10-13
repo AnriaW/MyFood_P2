@@ -6,6 +6,7 @@ import java.util.List;
 public class Entregador extends Usuario{
     private String veiculo;
     private String placa;
+    private boolean emEntrega = false;
 
     public Entregador(){}
 
@@ -29,6 +30,14 @@ public class Entregador extends Usuario{
 
     public void setPlaca(String Placa){
         this.placa = placa;
+    }
+
+    public boolean isEmEntrega() {
+        return emEntrega;
+    }
+
+    public void setEmEntrega(boolean emEntrega) {
+        this.emEntrega = emEntrega;
     }
 
     @Override

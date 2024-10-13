@@ -41,7 +41,7 @@
        <string>544.732.410-68</string>
       </void>
       <void property="email">
-       <string>carlos@ufal.com.br</string>
+       <string>lucas@ufal.com.br</string>
       </void>
       <void property="endereco">
        <string>Rua Exemplo N 321</string>
@@ -50,7 +50,7 @@
        <int>2</int>
       </void>
       <void property="nome">
-       <string>CarlosDono</string>
+       <string>Lucas</string>
       </void>
       <void property="senha">
        <string>123senha</string>

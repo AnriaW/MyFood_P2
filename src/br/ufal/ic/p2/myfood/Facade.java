@@ -127,4 +127,29 @@ public class Facade {
     public String getEmpresas(int idEntregador) throws WrongTypeUserException{
         return gerenciamento.getEmpresas(idEntregador);
     }
+
+    //User Story 8
+
+    public void liberarPedido(int idPedido) throws UnregisteredException, StatusException {
+        gerenciamento.liberarPedido(idPedido);
+    }
+
+    public int obterPedido(int idEntregador) throws WrongTypeUserException, UnregisteredException, StatusException {
+        return gerenciamento.obterPedido(idEntregador);
+    }
+
+    public int criarEntrega(int pedido, int entregador, String destino) throws UnregisteredException, StatusException {
+        return gerenciamento.criarEntrega(pedido, entregador, destino);
+    }
+
+    public String getEntrega(int idEntrega, String atributo) throws UnregisteredException, InvalidAtributeException {
+        return gerenciamento.getEntrega(idEntrega, atributo);
+    }
+    public int getIdEntrega(int pedido) throws UnregisteredException{
+        return gerenciamento.getIdEntrega(pedido);
+    }
+
+    public void entregar(int entregaId) throws UnregisteredException{
+        gerenciamento.entregar(entregaId);
+    }
 }

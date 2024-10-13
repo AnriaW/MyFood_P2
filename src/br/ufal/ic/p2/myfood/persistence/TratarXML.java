@@ -19,7 +19,7 @@ public class TratarXML {
             encoder.writeObject(objeto);
 
         } catch (IOException e) {
-            System.out.println("Deu ruim!!");
+            System.out.println("Problemas de Serializacao");
         }
 
     }
@@ -38,7 +38,7 @@ public class TratarXML {
             objeto = (T) decoder.readObject();
 
         } catch (IOException e) {
-            System.out.println("Deu ruim!!");
+            System.out.println("Problemas de Desserializacao");
         }
         return objeto;
     }
@@ -49,7 +49,7 @@ public class TratarXML {
             fos.write(new byte[0]);
 
         } catch (IOException e) {
-            System.out.println("Deu ruim!!");
+            System.out.println("Problemas ao Apagar Dados");
         }
     }
 }
