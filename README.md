@@ -44,100 +44,99 @@ src/br.ufal.ic.p2.myfood/
 4. Criação e Gerenciamento de Pedidos
 5. Sistema de Entrega
 
-# Gerenciamento Class Methods Overview
+# Visão Geral dos Métodos da Classe Gerenciamento
 
-The Gerenciamento class is a central component of the MyFood system, handling the business logic and coordinating interactions between different parts of the system. Here's an overview of each method:
+A classe Gerenciamento é um componente central do sistema MyFood, responsável pela lógica de negócios e coordenação das interações entre diferentes partes do sistema. Aqui está uma visão geral de cada método:
 
-## System Management
+## Gerenciamento do Sistema
 
-1. `zerarSistema()`: Resets the entire system by clearing all persisted data.
+1. `zerarSistema()`: Restaura o sistema inteiro, limpando todos os dados persistidos.
 
-2. `encerrarSistema()`: Saves the current state of the system and finalizes operations.
+2. `encerrarSistema()`: Salva o estado atual do sistema e finaliza as operações.
 
-## User Management
+## Gerenciamento de Usuários
 
-3. `criarUsuario(String nome, String email, String senha, String endereco)`: Creates a new regular user (cliente).
+3. `criarUsuario(String nome, String email, String senha, String endereco)`: Cria um novo usuário comum (cliente).
 
-4. `criarUsuario(String nome, String email, String senha, String endereco, String cpf)`: Creates a new business owner (dono) user.
+4. `criarUsuario(String nome, String email, String senha, String endereco, String cpf)`: Cria um novo usuário proprietário de empresa (dono).
 
-5. `criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa)`: Creates a new delivery person (entregador) user.
+5. `criarUsuario(String nome, String email, String senha, String endereco, String veiculo, String placa)`: Cria um novo usuário entregador.
 
-6. `getAtributoUsuario(int id, String atributo)`: Retrieves a specific attribute of a user.
+6. `getAtributoUsuario(int id, String atributo)`: Recupera um atributo específico de um usuário.
 
-7. `login(String email, String senha)`: Authenticates a user and returns their ID.
+7. `login(String email, String senha)`: Autentica um usuário e retorna seu ID.
 
-## Company Management
+## Gerenciamento de Empresas
 
-8. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String tipoCozinha)`: Creates a new restaurant.
+8. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String tipoCozinha)`: Cria um novo restaurante.
 
-9. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado)`: Creates a new market.
+9. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, String abre, String fecha, String tipoMercado)`: Cria um novo mercado.
 
-10. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios)`: Creates a new pharmacy.
+10. `criarEmpresa(String tipoEmpresa, int dono, String nome, String endereco, boolean aberto24Horas, int numeroFuncionarios)`: Cria uma nova farmácia.
 
-11. `getEmpresasDoUsuario(int idDono)`: Retrieves all companies owned by a specific user.
+11. `getEmpresasDoUsuario(int idDono)`: Recupera todas as empresas de um usuário específico.
 
-12. `getAtributoEmpresa(int idEmpresa, String atributo)`: Retrieves a specific attribute of a company.
+12. `getAtributoEmpresa(int idEmpresa, String atributo)`: Recupera um atributo específico de uma empresa.
 
-13. `getIdEmpresa(int idDono, String nome, int indice)`: Retrieves the ID of a company based on owner ID, name, and index.
+13. `getIdEmpresa(int idDono, String nome, int indice)`: Recupera o ID de uma empresa com base no ID do dono, nome e índice.
 
-14. `alterarFuncionamento(int mercadoId, String abre, String fecha)`: Updates the opening and closing times of a market.
+14. `alterarFuncionamento(int mercadoId, String abre, String fecha)`: Atualiza os horários de funcionamento de um mercado.
 
-## Product Management
+## Gerenciamento de Produtos
 
-15. `criarProduto(int idEmpresa, String nome, float valor, String categoria)`: Creates a new product for a company.
+15. `criarProduto(int idEmpresa, String nome, float valor, String categoria)`: Cria um novo produto para uma empresa.
 
-16. `editarProduto(int idProduto, String nome, float valor, String categoria)`: Edits an existing product.
+16. `editarProduto(int idProduto, String nome, float valor, String categoria)`: Edita um produto existente.
 
-17. `getProduto(String nome, int idEmpresa, String atributo)`: Retrieves a specific attribute of a product.
+17. `getProduto(String nome, int idEmpresa, String atributo)`: Recupera um atributo específico de um produto.
 
-18. `listarProdutos(int idEmpresa)`: Lists all products of a company.
+18. `listarProdutos(int idEmpresa)`: Lista todos os produtos de uma empresa.
 
-## Order Management
+## Gerenciamento de Pedidos
 
-19. `criarPedido(int idCliente, int idEmpresa)`: Creates a new order.
+19. `criarPedido(int idCliente, int idEmpresa)`: Cria um novo pedido.
 
-20. `adicionarProduto(int idPedido, int idProduto)`: Adds a product to an order.
+20. `adicionarProduto(int idPedido, int idProduto)`: Adiciona um produto a um pedido.
 
-21. `getNumeroPedido(int idCliente, int idEmpresa, int indice)`: Retrieves the order number based on client ID, company ID, and index.
+21. `getNumeroPedido(int idCliente, int idEmpresa, int indice)`: Recupera o número do pedido com base no ID do cliente, ID da empresa e índice.
 
-22. `getPedidos(int idPedido, String atributo)`: Retrieves a specific attribute of an order.
+22. `getPedidos(int idPedido, String atributo)`: Recupera um atributo específico de um pedido.
 
-23. `fecharPedido(int idPedido)`: Closes an order.
+23. `fecharPedido(int idPedido)`: Fecha um pedido.
 
-24. `liberarPedido(int idPedido)`: Releases an order for preparation.
+24. `liberarPedido(int idPedido)`: Libera um pedido para preparação.
 
-25. `removerProduto(int idPedido, String produto)`: Removes a product from an order.
+25. `removerProduto(int idPedido, String produto)`: Remove um produto de um pedido.
 
-## Delivery Management
+## Gerenciamento de Entregas
 
-26. `cadastrarEntregador(int idEmpresa, int idEntregador)`: Registers a delivery person with a company.
+26. `cadastrarEntregador(int idEmpresa, int idEntregador)`: Cadastra um entregador em uma empresa.
 
-27. `getEntregadores(int idEmpresa)`: Retrieves all delivery persons associated with a company.
+27. `getEntregadores(int idEmpresa)`: Recupera todos os entregadores associados a uma empresa.
 
-28. `getEmpresas(int idEntregador)`: Retrieves all companies a delivery person is associated with.
+28. `getEmpresas(int idEntregador)`: Recupera todas as empresas associadas a um entregador.
 
-29. `obterPedido(int idEntregador)`: Assigns an order to a delivery person.
+29. `obterPedido(int idEntregador)`: Atribui um pedido a um entregador.
 
-30. `criarEntrega(int idPedido, int idEntregador, String destino)`: Creates a new delivery for an order.
+30. `criarEntrega(int idPedido, int idEntregador, String destino)`: Cria uma nova entrega para um pedido.
 
-31. `getEntrega(int idEntrega, String atributo)`: Retrieves a specific attribute of a delivery.
+31. `getEntrega(int idEntrega, String atributo)`: Recupera um atributo específico de uma entrega.
 
-32. `getIdEntrega(int pedidoId)`: Retrieves the delivery ID associated with an order.
+32. `getIdEntrega(int pedidoId)`: Recupera o ID da entrega associada a um pedido.
 
-33. `entregar(int entregaId)`: Marks a delivery as completed.
+33. `entregar(int entregaId)`: Marca uma entrega como concluída.
 
-## Helper Methods
+## Métodos Auxiliares
 
-34. `testUserInvalid(String nome, String email, String senha, String endereco)`: Validates user input for creating a new user.
+34. `testUserInvalid(String nome, String email, String senha, String endereco)`: Valida a entrada de dados para criação de um novo usuário.
 
-35. `testProductInvalid(String nome, float valor, String categoria)`: Validates product input for creating or editing a product.
+35. `testProductInvalid(String nome, float valor, String categoria)`: Valida a entrada de dados para criação ou edição de um produto.
 
-36. `pedidosClienteEmpresa(int idCliente, int idEmpresa)`: Retrieves all open orders for a specific client and company.
+36. `pedidosClienteEmpresa(int idCliente, int idEmpresa)`: Recupera todos os pedidos abertos de um cliente e empresa específicos.
 
-37. `getIndexByNome(List<Empresa> empresas, String nome)`: Helper method to find the index of a company in a list by its name.
+37. `getIndexByNome(List<Empresa> empresas, String nome)`: Método auxiliar para encontrar o índice de uma empresa em uma lista pelo seu nome.
 
-These methods collectively manage the core functionalities of the MyFood system, handling user accounts, company operations, product management, order processing, and delivery logistics.
-
+Esses métodos gerenciam coletivamente as funcionalidades principais do sistema MyFood, lidando com contas de usuários, operações de empresas, gerenciamento de produtos, processamento de pedidos e logística de entregas.
 ## Instalação e Configuração
 
 1. Clone o repositório.

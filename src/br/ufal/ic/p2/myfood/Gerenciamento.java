@@ -709,12 +709,12 @@ public class Gerenciamento {
 
         Pedido pedidoSelecionado = pedidosProntos.stream()
                 .filter(p -> p.getEmpresa().getClass().getSimpleName().equals("Farmacia"))
-                .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido de farmácia mais antigo
+                .min(Comparator.comparingInt(Pedido::getNumero))
                 .orElse(null);
 
         if (pedidoSelecionado == null) {
             pedidoSelecionado = pedidosProntos.stream()
-                    .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido mais antigo no geral
+                    .min(Comparator.comparingInt(Pedido::getNumero))
                     .orElseThrow(() -> new StatusException("Nao foi possivel selecionar um pedido"));
         }
 
