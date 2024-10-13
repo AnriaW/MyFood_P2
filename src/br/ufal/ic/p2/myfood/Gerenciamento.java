@@ -5,10 +5,7 @@ import br.ufal.ic.p2.myfood.utils.*;
 import br.ufal.ic.p2.myfood.models.*;
 import br.ufal.ic.p2.myfood.persistence.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Gerenciamento {
@@ -686,13 +683,15 @@ public class Gerenciamento {
     }
 
     public int obterPedido(int idEntregador) throws WrongTypeUserException, UnregisteredException, StatusException {
-
+        // Buscar o entregador a partir do ID
         Usuario entregador = persistenciaUsuario.buscar(idEntregador);
 
+        // Verificar se é realmente um entregador válido
         if (entregador == null || !entregador.getClass().getSimpleName().equals("Entregador")) {
             throw new WrongTypeUserException("Usuario nao e um entregador.");
         }
 
+        // Listar as empresas associadas ao entregador
         List<Empresa> empresasDoEntregador = persistenciaEmpresa.listar()
                 .stream()
                 .filter(empresa -> empresa.getListaEntregadores().contains(entregador))
@@ -702,34 +701,39 @@ public class Gerenciamento {
             throw new UnregisteredException("Entregador nao esta em nenhuma empresa.");
         }
 
-        List<Pedido> pedidosProntos = new ArrayList<>();
-
-        for (Pedido pedido : persistenciaPedido.listar()) {
-
-            if (empresasDoEntregador.contains(pedido.getEmpresa()) && pedido.getEstado().equals("pronto")) {
-                pedidosProntos.add(pedido);
-            }
-        }
+        // Filtrar os pedidos prontos das empresas associadas ao entregador
+        List<Pedido> pedidosProntos = persistenciaPedido.listar()
+                .stream()
+                .filter(pedido -> empresasDoEntregador.contains(pedido.getEmpresa()) && pedido.getEstado().equals("pronto"))
+                .collect(Collectors.toList());
 
         if (pedidosProntos.isEmpty()) {
             throw new StatusException("Nao existe pedido para entrega");
         }
 
-        pedidosProntos.sort((pedido1, pedido2) -> {
-            boolean empresa1EhFarmacia = pedido1.getEmpresa().getClass().getSimpleName().equals("Farmacia");
-            boolean empresa2EhFarmacia = pedido2.getEmpresa().getClass().getSimpleName().equals("Farmacia");
+        // Priorizar pedidos de farmácia
+        Pedido pedidoSelecionado = pedidosProntos.stream()
+                .filter(p -> p.getEmpresa().getClass().getSimpleName().equals("Farmacia"))
+                .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido de farmácia mais antigo
+                .orElse(null);
 
-            if (empresa1EhFarmacia && !empresa2EhFarmacia) {
-                return -1;
-            } else if (!empresa1EhFarmacia && empresa2EhFarmacia) {
-                return 1;
-            } else {
-                return Integer.compare(pedido1.getNumero(), pedido2.getNumero());
-            }
-        });
+        // Se não houver pedidos de farmácia, selecionar o pedido mais antigo
+        if (pedidoSelecionado == null) {
+            pedidoSelecionado = pedidosProntos.stream()
+                    .min(Comparator.comparingInt(Pedido::getNumero))  // Selecionar o pedido mais antigo no geral
+                    .orElseThrow(() -> new StatusException("Nao foi possivel selecionar um pedido"));
+        }
 
-        return pedidosProntos.get(0).getNumero();  // Retorna o número do pedido
+        // Imprimir para depuração
+        System.out.println("Pedido selecionado: " + pedidoSelecionado.getNumero() +
+                ", Tipo de empresa: " + pedidoSelecionado.getEmpresa().getClass().getSimpleName());
+
+        // Retornar o número do pedido selecionado
+        return pedidoSelecionado.getNumero();
     }
+
+
+
 
     public int criarEntrega(int idPedido, int idEntregador, String destino) throws UnregisteredException, StatusException {
         Pedido pedido = persistenciaPedido.buscar(idPedido);
@@ -738,18 +742,17 @@ public class Gerenciamento {
         }
 
         Usuario usuario = persistenciaUsuario.buscar(idEntregador);
-        if (usuario == null || !(usuario instanceof Entregador)) {
+        if (usuario == null || !usuario.getClass().getSimpleName().equals("Entregador")) {
             throw new UnregisteredException("Nao e um entregador valido");
         }
 
         Entregador entregador = (Entregador) usuario;
 
-        if (!pedido.getEstado().equals("pronto")) {
-            throw new StatusException("Pedido nao esta pronto para entrega");
-        }
-
         if (entregador.isEmEntrega()) {
             throw new StatusException("Entregador ainda em entrega");
+        }
+        if (!pedido.getEstado().equals("pronto")) {
+            throw new StatusException("Pedido nao esta pronto para entrega");
         }
 
         if (destino == null) {
@@ -757,16 +760,24 @@ public class Gerenciamento {
         }
 
         entregador.setEmEntrega(true);
+        pedido.mudarParaEntregando();
 
         Entrega novaEntrega = new Entrega(pedido, entregador, destino);
         persistenciaEntrega.salvar(novaEntrega);
-
-        pedido.mudarParaEntregando();
         persistenciaPedido.atualizar();
-        persistenciaUsuario.atualizar();  // Atualiza o status do entregador
+        persistenciaUsuario.atualizar();
+
+        System.out.println("Pedido empresa: " + pedido.getEmpresa().getClass().getSimpleName());
+        System.out.println("Entregador em entrega: " + entregador.isEmEntrega());
+
+        Empresa empresaDoPedido = pedido.getEmpresa();
+        System.out.println("Empresa do pedido: " + empresaDoPedido.getNome());
+
+
 
         return novaEntrega.getId();
     }
+
     public String getEntrega(int idEntrega, String atributo) throws UnregisteredException, InvalidAtributeException {
         Entrega entrega = persistenciaEntrega.buscar(idEntrega);
         if (entrega == null) {

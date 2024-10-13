@@ -60,7 +60,7 @@ public class Entrega {
             case "pedido" -> String.valueOf(pedido.getNumero());
             case "entregador" -> entregador.getNome();
             case "destino" -> getDestino();
-            case "produtos" -> pedido.getProd_list().toString();
+            case "produtos" -> "{"+pedido.getProd_list().toString()+"}";
             default -> throw new InvalidAtributeException("Atributo nao existe");
         };
     }
